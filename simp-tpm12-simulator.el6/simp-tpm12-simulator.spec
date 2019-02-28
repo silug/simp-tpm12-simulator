@@ -12,14 +12,13 @@ URL:     https://github.com/simp/simp-tpm12-simulator
 ###https://sourceforge.net/projects/ibmswtpm/files/tpm4769tar.gz/download
 ###https://sourceforge.net/projects/ibmswtpm/files/tpm%%{version}tar.gz/download
 Source0: %{name}-%{version}.tar.gz
-Source1: %{name}.service
+Source1: %{name}
 Source2: %{name}.environment
-Source3: simp-tpm12-tpmbios.service
-Source4: simp-tpm12-tpminit.service
-Source5: simp-tpm12-tcsd.service
+Source3: simp-tpm12-tpmbios
+Source4: simp-tpm12-tpminit
+Source5: simp-tpm12-tcsd
 Source6: tpminit
-Source7: tcsdstarter
-Source8: LICENSE
+Source7: LICENSE
 
 BuildRequires: gcc
 BuildRequires: openssl-devel
@@ -43,7 +42,7 @@ cd ../libtpm
 ./autogen
 ./configure
 make
-cat %{SOURCE8} > ../LICENSE
+cat %{SOURCE7} > ../LICENSE
 
 %install
 install -m 0755 -D tpm/tpm_server %{buildroot}%{_bindir}/%{_name}
@@ -51,15 +50,14 @@ install -m 0755 -D libtpm/utils/tpmbios %{buildroot}%{_bindir}/tpmbios
 install -m 0755 -D libtpm/utils/createek %{buildroot}%{_bindir}/createek
 install -m 0755 -D libtpm/utils/nv_definespace %{buildroot}%{_bindir}/nv_definespace
 install -m 0755 -D %{SOURCE6}     %{buildroot}%{_bindir}/tpminit
-install -m 0755 -D %{SOURCE7}     %{buildroot}%{_bindir}/tcsdstarter
-install -m 0644 -D %{SOURCE1}     %{buildroot}%{_unitdir}/%{_name}.service
+install -m 0755 -D %{SOURCE1}     %{buildroot}%{_initddir}/%{_name}
 install -m 0644 -D %{SOURCE2}     %{buildroot}%{_sysconfdir}/default/%{_name}
-install -m 0644 -D %{SOURCE3}     %{buildroot}%{_unitdir}/tpm12-tpmbios.service
-install -m 0644 -D %{SOURCE4}     %{buildroot}%{_unitdir}/tpm12-tpminit.service
-install -m 0644 -D %{SOURCE5}     %{buildroot}%{_unitdir}/tpm12-tcsd.service
+install -m 0755 -D %{SOURCE3}     %{buildroot}%{_initddir}/tpm12-tpmbios
+install -m 0755 -D %{SOURCE4}     %{buildroot}%{_initddir}/tpm12-tpminit
+install -m 0755 -D %{SOURCE5}     %{buildroot}%{_initddir}/tpm12-tcsd
 
 %files
-%license LICENSE
+%doc LICENSE
 #BSD
 %{_bindir}/%{_name}
 %{_bindir}/tpmbios
@@ -67,12 +65,11 @@ install -m 0644 -D %{SOURCE5}     %{buildroot}%{_unitdir}/tpm12-tcsd.service
 %{_bindir}/nv_definespace
 #ASL 2.0
 %{_bindir}/tpminit
-%{_bindir}/tcsdstarter
-%{_unitdir}/%{_name}.service
+%{_initddir}/%{_name}
 %{_sysconfdir}/default/%{_name}
-%{_unitdir}/tpm12-tpmbios.service
-%{_unitdir}/tpm12-tpminit.service
-%{_unitdir}/tpm12-tcsd.service
+%{_initddir}/tpm12-tpmbios
+%{_initddir}/tpm12-tpminit
+%{_initddir}/tpm12-tcsd
 
 
 %pre
@@ -85,26 +82,17 @@ useradd -r -u 59 -g tss -d /dev/null -s /sbin/nologin \
 exit 0
 
 %post
-%systemd_postun %{_name}.serivce
-%systemd_postun simp-tpm12-tpmbios.service
-%systemd_postun simp-tpm12-tpminit.service
-%systemd_postun simp-tpm12-tcsd.service
 
 %preun
-%systemd_preun %{_name}.serivce
-%systemd_preun simp-tpm12-tpmbios.service
-%systemd_postun simp-tpm12-tpminit.service
-%systemd_postun simp-tpm12-tcsd.service
 
 %postun
-%systemd_postun %{_name}.serivce
-%systemd_postun simp-tpm12-tpmbios.service
-%systemd_postun simp-tpm12-tpminit.service
-%systemd_postun simp-tpm12-tcsd.service
 
 %changelog
+* Tue Feb 26 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.2
+- Removed el6 identifier in file names
+
 * Tue Feb 5 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.2
 - Added LICENSE file
 
-* Mon Jan 7 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.1
+* Fri Jan 25 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.1
 - Initial commit

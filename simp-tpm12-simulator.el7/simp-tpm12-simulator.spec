@@ -1,4 +1,7 @@
-Name: simp-el6-tpm12-simulator
+#Set the dist variable to be .el7 instead of default .el7.centos
+%define dist %{expand:%%(/usr/lib/rpm/redhat/dist.sh --dist)}
+
+Name: simp-tpm12-simulator
 Version: 4769.0.0
 Release: 0%{?dist}
 Summary: The SIMP IBM TPM 1.2 simulator
@@ -12,13 +15,14 @@ URL:     https://github.com/simp/simp-tpm12-simulator
 ###https://sourceforge.net/projects/ibmswtpm/files/tpm4769tar.gz/download
 ###https://sourceforge.net/projects/ibmswtpm/files/tpm%%{version}tar.gz/download
 Source0: %{name}-%{version}.tar.gz
-Source1: %{name}
+Source1: %{name}.service
 Source2: %{name}.environment
-Source3: simp-el6-tpm12-tpmbios
-Source4: simp-el6-tpm12-tpminit
-Source5: simp-el6-tpm12-tcsd
+Source3: simp-tpm12-tpmbios.service
+Source4: simp-tpm12-tpminit.service
+Source5: simp-tpm12-tcsd.service
 Source6: tpminit
-Source7: LICENSE
+Source7: tcsdstarter
+Source8: LICENSE
 
 BuildRequires: gcc
 BuildRequires: openssl-devel
@@ -42,7 +46,7 @@ cd ../libtpm
 ./autogen
 ./configure
 make
-cat %{SOURCE7} > ../LICENSE
+cat %{SOURCE8} > ../LICENSE
 
 %install
 install -m 0755 -D tpm/tpm_server %{buildroot}%{_bindir}/%{_name}
@@ -50,14 +54,15 @@ install -m 0755 -D libtpm/utils/tpmbios %{buildroot}%{_bindir}/tpmbios
 install -m 0755 -D libtpm/utils/createek %{buildroot}%{_bindir}/createek
 install -m 0755 -D libtpm/utils/nv_definespace %{buildroot}%{_bindir}/nv_definespace
 install -m 0755 -D %{SOURCE6}     %{buildroot}%{_bindir}/tpminit
-install -m 0755 -D %{SOURCE1}     %{buildroot}%{_initddir}/%{_name}
+install -m 0755 -D %{SOURCE7}     %{buildroot}%{_bindir}/tcsdstarter
+install -m 0644 -D %{SOURCE1}     %{buildroot}%{_unitdir}/%{_name}.service
 install -m 0644 -D %{SOURCE2}     %{buildroot}%{_sysconfdir}/default/%{_name}
-install -m 0755 -D %{SOURCE3}     %{buildroot}%{_initddir}/tpm12-tpmbios
-install -m 0755 -D %{SOURCE4}     %{buildroot}%{_initddir}/tpm12-tpminit
-install -m 0755 -D %{SOURCE5}     %{buildroot}%{_initddir}/tpm12-tcsd
+install -m 0644 -D %{SOURCE3}     %{buildroot}%{_unitdir}/tpm12-tpmbios.service
+install -m 0644 -D %{SOURCE4}     %{buildroot}%{_unitdir}/tpm12-tpminit.service
+install -m 0644 -D %{SOURCE5}     %{buildroot}%{_unitdir}/tpm12-tcsd.service
 
 %files
-%doc LICENSE
+%license LICENSE
 #BSD
 %{_bindir}/%{_name}
 %{_bindir}/tpmbios
@@ -65,11 +70,12 @@ install -m 0755 -D %{SOURCE5}     %{buildroot}%{_initddir}/tpm12-tcsd
 %{_bindir}/nv_definespace
 #ASL 2.0
 %{_bindir}/tpminit
-%{_initddir}/%{_name}
+%{_bindir}/tcsdstarter
+%{_unitdir}/%{_name}.service
 %{_sysconfdir}/default/%{_name}
-%{_initddir}/tpm12-tpmbios
-%{_initddir}/tpm12-tpminit
-%{_initddir}/tpm12-tcsd
+%{_unitdir}/tpm12-tpmbios.service
+%{_unitdir}/tpm12-tpminit.service
+%{_unitdir}/tpm12-tcsd.service
 
 
 %pre
@@ -82,14 +88,26 @@ useradd -r -u 59 -g tss -d /dev/null -s /sbin/nologin \
 exit 0
 
 %post
+%systemd_postun %{_name}.serivce
+%systemd_postun simp-tpm12-tpmbios.service
+%systemd_postun simp-tpm12-tpminit.service
+%systemd_postun simp-tpm12-tcsd.service
 
 %preun
+%systemd_preun %{_name}.serivce
+%systemd_preun simp-tpm12-tpmbios.service
+%systemd_postun simp-tpm12-tpminit.service
+%systemd_postun simp-tpm12-tcsd.service
 
 %postun
+%systemd_postun %{_name}.serivce
+%systemd_postun simp-tpm12-tpmbios.service
+%systemd_postun simp-tpm12-tpminit.service
+%systemd_postun simp-tpm12-tcsd.service
 
 %changelog
 * Tue Feb 5 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.2
 - Added LICENSE file
 
-* Fri Jan 25 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.1
+* Mon Jan 7 2019 Michael Morrone <michael.morrone@onyxpoint.com> - 0.0.1
 - Initial commit

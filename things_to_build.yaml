@@ -33,35 +33,41 @@
 #   * https://sourceforge.net/projects/ibmswtpm/
 #   * http://ibmswtpm.sourceforge.net/tpm_tss.html
 #
-simp-tpm12-simulator:
-  :type: :targz
-  :build: 'yes'
-  :version: '4769'
-  :url: https://sourceforge.net/projects/ibmswtpm/files/tpm%{VERSION}tar.gz/download
-  :extras:
-    :post_dl:
-      - cp -v '%{PROJECT_DIR}/simp-tpm12-simulator.service' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-tpm12-tpmbios.service' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-tpm12-tpminit.service' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-tpm12-tcsd.service' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-tpm12-simulator.environment' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/tpminit' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/tcsdstarter' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/LICENSE' '%{SOURCES_DIR}/'
 
-simp-el6-tpm12-simulator:
-  :type: :targz
-  :build: 'yes'
-  :version: '4769'
-  :url: https://sourceforge.net/projects/ibmswtpm/files/tpm%{VERSION}tar.gz/download
-  :extras:
-    :post_dl:
-      - cp -v '%{PROJECT_DIR}/simp-el6-tpm12-simulator' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-el6-tpm12-tpmbios' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-el6-tpm12-tpminit' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-el6-tpm12-tcsd' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/simp-el6-tpm12-simulator.environment' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/tpminit' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/tcsdstarter' '%{SOURCES_DIR}/'
-      - cp -v '%{PROJECT_DIR}/LICENSE' '%{SOURCES_DIR}/'
+# For EL7 systems, create a softlink simp-tpm12-simulator pointing to
+# simp-el7-tpm12-simulator and uncomment the following lines:
+simp-tpm12-simulator:
+  - :dist: .el7
+    :type: :targz
+    :build: 'yes'
+    :version: '4769'
+    :url: https://sourceforge.net/projects/ibmswtpm/files/tpm%{VERSION}tar.gz/download
+    :extras:
+      :post_dl:
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-simulator.service' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-tpmbios.service' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-tpminit.service' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-tcsd.service' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-simulator.environment' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/tpminit' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/tcsdstarter' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/LICENSE' '%{SOURCES_DIR}/'
+
+          # For EL6 systems, create a softlink simp-tpm12-simulator pointing to
+  #simp-el6-tpm12-simulator and uncomment the following lines:
+  - :dist: .el6
+    :type: :targz
+    :build: 'yes'
+    :version: '4769'
+    :url: https://sourceforge.net/projects/ibmswtpm/files/tpm%{VERSION}tar.gz/download
+    :extras:
+      :post_dl:
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-simulator' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-tpmbios' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-tpminit' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-tcsd' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/simp-tpm12-simulator.environment' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/tpminit' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/tcsdstarter' '%{SOURCES_DIR}/'
+        - cp -v '%{PROJECT_DIR}/LICENSE' '%{SOURCES_DIR}/'
 
